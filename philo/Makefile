@@ -6,13 +6,15 @@
 #    By: afalconi <afalconi@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/22 05:41:09 by afalconi          #+#    #+#              #
-#    Updated: 2023/06/19 12:53:22 by afalconi         ###   ########.fr        #
+#    Updated: 2023/06/20 23:01:50 by afalconi         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 
 CFILES =	main.c \
-
+			utils.c \
+			setup.c \
+			philotable.c
 OBJ = $(CFILES:.c=.o)
 
 CC = @ gcc
