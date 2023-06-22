@@ -6,7 +6,7 @@
 /*   By: afalconi <afalconi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/20 18:21:11 by afalconi          #+#    #+#             */
-/*   Updated: 2023/06/21 07:02:28 by afalconi         ###   ########.fr       */
+/*   Updated: 2023/06/23 00:25:33 by afalconi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,25 +43,27 @@ void	createlistofph(t_philo *ph)
 
 	i = 0;
 	ph->lphilo = ft_malloc(sizeof(t_listphilo));
+	initvaluse(ph, i);
 	ph->hlphilo = ph->lphilo;
-	ph->lphilo->eatcount = 0;
-	pthread_mutex_init(&ph->lphilo->fork, NULL);
-	ph->lphilo->timevar = 0;
-	ph->lphilo->timevar2 = 0;
-	ph->lphilo->next = NULL;
-	ph->lphilo->philoid = 1;
 	while(++i < ph->nphilo)
 	{
 		ph->lphilo->next = ft_malloc(sizeof(t_listphilo));
 		ph->lphilo = ph->lphilo->next;
-		ph->lphilo->eatcount = 0;
-		ph->lphilo->timevar = 0;
-		ph->lphilo->timevar2 = 0;
-		ph->lphilo->philoid = i + 1;
-		pthread_mutex_init(&ph->lphilo->fork, NULL);
+		initvaluse(ph, i);
 	}
 	ph->lphilo->next = ph->hlphilo;
 	ph->lphilo = ph->lphilo->next;
+}
+
+void	initvaluse(t_philo *ph, int i)
+{
+	ph->lphilo->eatcount = 0;
+	ph->lphilo->timevar = 0;
+	ph->lphilo->timevar2 = 0;
+	ph->lphilo->philoid = i + 1;
+	ph->lphilo->info_to_stamp = 0;
+	ph->lphilo->struct_philo = ph;
+	pthread_mutex_init(&ph->lphilo->fork, NULL);
 }
 
 void	ckchar(char	*av, int f)

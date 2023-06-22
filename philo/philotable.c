@@ -6,64 +6,66 @@
 /*   By: afalconi <afalconi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/20 23:01:34 by afalconi          #+#    #+#             */
-/*   Updated: 2023/06/22 14:03:07 by afalconi         ###   ########.fr       */
+/*   Updated: 2023/06/23 00:30:58 by afalconi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	exephilo(t_philo *ph)
+void	exephilo(t_listphilo *ph)
 {
-	struct timeval tv;
+	ph->timealive = gettime() + ph->struct_philo->ttdie;
 
-	gettimeofday(&tv, NULL);
-	ph->lphilo->timealive = tv.tv_usec;
-	ph->lphilo->timevar = tv.tv_usec;
-	pthread_mutex_lock(&ph->print);
-	printf("%d %d is thinking\n", ph->lphilo->timealive - ph->lphilo->timevar, ph->lphilo->philoid);
-	pthread_mutex_unlock(&ph->print);
-	pthread_mutex_lock(&ph->hlphilo->fork);
-	gettimeofday(&tv, NULL);
-	ph->lphilo->timealive = tv.tv_usec;
-	pthread_mutex_lock(&ph->print);
-	printf("%d %d taken a fork\n", ph->lphilo->timealive - ph->lphilo->timevar, ph->lphilo->philoid);
-	pthread_mutex_unlock(&ph->print);
-	pthread_mutex_lock(&ph->hlphilo->next->fork);
-	gettimeofday(&tv, NULL);
-	ph->lphilo->timealive = tv.tv_usec;
-	pthread_mutex_lock(&ph->print);
-	printf("%d %d taken a fork\n", ph->lphilo->timealive - ph->lphilo->timevar, ph->lphilo->philoid);
-	pthread_mutex_unlock(&ph->print);
-	gettimeofday(&tv, NULL);
-	ph->lphilo->timealive = tv.tv_usec;
-	pthread_mutex_lock(&ph->print);
-	printf("%d %d is eating\n", ph->lphilo->timealive - ph->lphilo->timevar, ph->lphilo->philoid);
-	pthread_mutex_unlock(&ph->print);
-	ph->lphilo->timevar = tv.tv_usec;
-	ph->lphilo->timevar2 = tv.tv_usec;
-	while (ph->lphilo->timevar2 <= ph->lphilo->timevar + ph->tteat * 1000)
+	// ph->lphilo->startlive = ph->lphilo->timealive - ph->ttdie;
+	ph->startlive = gettime();
+	while(ph->struct_philo->isdeat == 0)
 	{
-		gettimeofday(&tv, NULL);
-		ph->lphilo->timevar2 = tv.tv_usec;
-		ph->lphilo->timealive = tv.tv_usec;
+		takeafork(ph);
+		xcycle(ph, "is eating\n", ph->struct_philo->tteat);
+		pthread_mutex_unlock(&ph->fork);
+		pthread_mutex_unlock(&ph->next->fork);
+		xcycle(ph, "is sleeping\n", ph->struct_philo->ttsleep);
+		if (ph->struct_philo->neat != -1)
+			ph->eatcount ++;
+		ft_stamp(ph, ph->philoid, "is thinking\n");
 	}
-	pthread_mutex_unlock(&ph->hlphilo->fork);
-	pthread_mutex_unlock(&ph->hlphilo->next->fork);
-	gettimeofday(&tv, NULL);
-	ph->lphilo->timevar = tv.tv_usec;
-	ph->lphilo->timevar2 = tv.tv_usec;
-	pthread_mutex_lock(&ph->print);
-	printf("%d %d is sleeping\n", ph->lphilo->timealive - ph->lphilo->timevar, ph->lphilo->philoid);
-	pthread_mutex_unlock(&ph->print);
-	while (ph->lphilo->timevar2 <= ph->lphilo->timevar + ph->ttsleep * 1000)
-	{
-		gettimeofday(&tv, NULL);
-		ph->lphilo->timevar2 = tv.tv_usec;
-		ph->lphilo->timealive = tv.tv_usec;
-	}
-	if (ph->neat != -1)
-		ph->lphilo->eatcount ++;
+	printf("fine\n");
 }
+
+void	ft_stamp(t_listphilo	*ph, int n, char *str)
+{
+	pthread_mutex_lock(&ph->struct_philo->print);
+	ph->info_to_stamp = gettime() - ph->startlive;
+	printf("%llu %d %s", ph->info_to_stamp, n, str);
+	pthread_mutex_unlock(&ph->struct_philo->print);
+}
+
+void	takeafork(t_listphilo	*ph)
+{
+	pthread_mutex_lock(&ph->fork);
+	ft_stamp(ph, ph->philoid, "taken a fork\n");
+	pthread_mutex_lock(&ph->next->fork);
+	ft_stamp(ph, ph->philoid, "taken a fork\n");
+}
+
+void	xcycle(t_listphilo *ph, char *str, int conditions)
+{
+	ph->timevar = gettime();
+	ph->timevar2 = gettime();
+	ft_stamp(ph, ph->philoid, str);
+	while (ph->timevar2 - ph->timevar <= conditions * 1000)
+		ph->timevar = gettime();
+}
+
+long int	gettime(void)
+{
+	struct timeval	tv;
+
+	if (gettimeofday(&tv, NULL))
+		return (-1);
+	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
+}
+
 
 void	test()
 {

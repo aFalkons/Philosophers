@@ -6,32 +6,41 @@
 /*   By: afalconi <afalconi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/19 12:54:04 by afalconi          #+#    #+#             */
-/*   Updated: 2023/06/22 14:00:21 by afalconi         ###   ########.fr       */
+/*   Updated: 2023/06/23 00:26:05 by afalconi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
+
+
 int	main(int ac, char **av)
 {
 	int	i;
+	pthread_mutex_t	forth;
 
 	i = -1;
 	t_philo ph;
 	setup(ac - 1, &av[1], &ph);
 	// pthread_create(&(ph.lphilo->tr), NULL, (void *)test, NULL);
 	// pthread_join(ph.lphilo->tr, NULL);
-	while (++i < ph.nphilo / 2)
+	pthread_mutex_init(&ph.print, NULL);
+	ph.isdeat = 0;
+	while (++i < ph.nphilo)
 	{
-		printf("GG\n");
-		// exephilo(&ph);
-		pthread_create(&(ph.lphilo->tr), NULL, (void *)exephilo, &ph);
-		usleep(1);
-		if (ph.lphilo->next->next != NULL)
-			ph.lphilo = ph.lphilo->next->next;
+		pthread_create(&(ph.lphilo->tr), NULL, (void *)exephilo, &ph.lphilo);
+		pthread_detach((ph.lphilo->tr));
+		ph.lphilo = ph.lphilo->next;
+		usleep(100);
 	}
+	while (1);
 	return(0);
 }
+
+
+	// -fsanitize=thread
+
+
 
 	// struct timeval tv;
 	// pthread_t p1, p2, p3, p4;
