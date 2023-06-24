@@ -6,7 +6,7 @@
 /*   By: afalconi <afalconi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/20 18:21:11 by afalconi          #+#    #+#             */
-/*   Updated: 2023/06/24 04:41:04 by afalconi         ###   ########.fr       */
+/*   Updated: 2023/06/24 10:53:08 by afalconi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,28 @@ void	setup(int ac, char **av, struct s_philo *ph)
 	else
 		ph->n_eat = -1;
 	ph->singol_philo = ft_malloc(ph->n_philo * sizeof(t_singol_philo));
+	pthread_mutex_init(&ph->print, NULL);
+	setup2(ph);
+}
 
+void	setup2(struct s_philo *ph)
+{
+	t_singol_philo	*tmp;
+	int				i;
+
+	i = -1;
+	while(++i < ph->n_philo)
+	{
+		tmp = &ph->singol_philo[i];
+		tmp->philo_id = i + 1;
+		pthread_mutex_init(&tmp->singol_forks, NULL);
+		tmp->philo_info = ph;
+		tmp->f_eatcount = 0;
+		if (i != ph->n_philo - 1)
+			tmp->next = &ph->singol_philo[i + 1];
+		else
+			tmp->next = &ph->singol_philo[0];
+	}
 }
 
 void	ckchar(char	*av, int f)
