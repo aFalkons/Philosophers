@@ -6,7 +6,7 @@
 /*   By: afalconi <afalconi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/19 12:54:04 by afalconi          #+#    #+#             */
-/*   Updated: 2023/06/23 00:26:05 by afalconi         ###   ########.fr       */
+/*   Updated: 2023/06/24 01:04:51 by afalconi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,22 +17,32 @@
 int	main(int ac, char **av)
 {
 	int	i;
-	pthread_mutex_t	forth;
+	t_listphilo *ph;
+	t_philo infoph;
 
 	i = -1;
-	t_philo ph;
-	setup(ac - 1, &av[1], &ph);
-	// pthread_create(&(ph.lphilo->tr), NULL, (void *)test, NULL);
-	// pthread_join(ph.lphilo->tr, NULL);
-	pthread_mutex_init(&ph.print, NULL);
-	ph.isdeat = 0;
-	while (++i < ph.nphilo)
+	setup(ac - 1, &av[1], ph, infoph);
+	printf("%d\n", ph->struct_philo->nphilo);
+	printf("GG\n");
+	while (++i < ph->struct_philo->nphilo)
 	{
-		pthread_create(&(ph.lphilo->tr), NULL, (void *)exephilo, &ph.lphilo);
-		pthread_detach((ph.lphilo->tr));
-		ph.lphilo = ph.lphilo->next;
-		usleep(100);
+		// pthread_create(&(ph.tr), NULL, (void *)exephilo, &ph.struct_philo.lphilo);
+		// pthread_detach((ph.tr));
+		// usleep(100);
+		printf("%d\n", ph->philoid);
+		ph = ph->next;
 	}
+	// pthread_mutex_init(&ph.struct_philo.print, NULL);
+	// pthread_create(&(ph.tr), NULL, (void *)exephilo, &ph);
+	// pthread_detach((ph.tr));
+	// ph.struct_philo.isdeat = 0;
+	// while (++i < ph.nphilo)
+	// {
+	// 	pthread_create(&(ph.lphilo->tr), NULL, (void *)exephilo, &ph.lphilo);
+	// 	pthread_detach((ph.lphilo->tr));
+	// 	ph.lphilo = ph.lphilo->next;
+	// 	usleep(100);
+	// }
 	while (1);
 	return(0);
 }

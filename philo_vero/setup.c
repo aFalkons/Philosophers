@@ -6,13 +6,13 @@
 /*   By: afalconi <afalconi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/20 18:21:11 by afalconi          #+#    #+#             */
-/*   Updated: 2023/06/23 00:25:33 by afalconi         ###   ########.fr       */
+/*   Updated: 2023/06/24 04:41:04 by afalconi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	setup(int ac, char **av, t_philo *ph)
+void	setup(int ac, char **av, struct s_philo *ph)
 {
 	int i;
 
@@ -26,44 +26,16 @@ void	setup(int ac, char **av, t_philo *ph)
 		else
 			ckchar(av[i], 1);
 	}
-	ph->nphilo = ft_atoi(av[0]);
-	ph->ttdie = ft_atoi(av[1]);
-	ph->tteat = ft_atoi(av[2]);
-	ph->ttsleep  = ft_atoi(av[3]);
+	ph->n_philo = ft_atoi(av[0]);
+	ph->t_t_die = ft_atoi(av[1]);
+	ph->t_t_eat = ft_atoi(av[2]);
+	ph->t_t_sleep  = ft_atoi(av[3]);
 	if (ac == 5)
-		ph->neat = ft_atoi(av[4]);
+		ph->n_eat = ft_atoi(av[4]);
 	else
-		ph->neat = -1;
-	createlistofph(ph);
-}
+		ph->n_eat = -1;
+	ph->singol_philo = ft_malloc(ph->n_philo * sizeof(t_singol_philo));
 
-void	createlistofph(t_philo *ph)
-{
-	int	i;
-
-	i = 0;
-	ph->lphilo = ft_malloc(sizeof(t_listphilo));
-	initvaluse(ph, i);
-	ph->hlphilo = ph->lphilo;
-	while(++i < ph->nphilo)
-	{
-		ph->lphilo->next = ft_malloc(sizeof(t_listphilo));
-		ph->lphilo = ph->lphilo->next;
-		initvaluse(ph, i);
-	}
-	ph->lphilo->next = ph->hlphilo;
-	ph->lphilo = ph->lphilo->next;
-}
-
-void	initvaluse(t_philo *ph, int i)
-{
-	ph->lphilo->eatcount = 0;
-	ph->lphilo->timevar = 0;
-	ph->lphilo->timevar2 = 0;
-	ph->lphilo->philoid = i + 1;
-	ph->lphilo->info_to_stamp = 0;
-	ph->lphilo->struct_philo = ph;
-	pthread_mutex_init(&ph->lphilo->fork, NULL);
 }
 
 void	ckchar(char	*av, int f)
