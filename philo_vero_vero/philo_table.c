@@ -6,7 +6,7 @@
 /*   By: afalconi <afalconi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/24 03:13:43 by afalconi          #+#    #+#             */
-/*   Updated: 2023/06/26 03:45:59 by afalconi         ###   ########.fr       */
+/*   Updated: 2023/06/27 14:52:11 by afalconi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,61 +34,17 @@ void	philo_routine(struct s_singol_philo *singol_philo)
 	singol_philo->last_eat = singol_philo->start_live;
 	while(singol_philo->philo_info->isdeat == 0)
 	{
-		if (singol_philo->philo_info->t_t_die <= gettime() - singol_philo->last_eat)
-		{
-			pthread_mutex_lock(&singol_philo->philo_info->for_death);
-			singol_philo->philo_info->isdeat = 1;
-			pthread_mutex_unlock(&singol_philo->philo_info->for_death);
-			singol_philo->is_death = 1;
-		}
-		if (singol_philo->philo_info->isdeat == 1)
-		{
-			if (singol_philo->is_death == 1)
-				ft_stamp(singol_philo, singol_philo->philo_id, "died\n");
-			break;
-		}
 		takeafork(singol_philo);
-		if (singol_philo->philo_info->isdeat == 1)
-		{
-			if (singol_philo->is_death == 1)
-				ft_stamp(singol_philo, singol_philo->philo_id, "died\n");
-			break;
-		}
-		if (singol_philo->philo_info->isdeat == 1)
-		{
-			if (singol_philo->is_death == 1)
-				ft_stamp(singol_philo, singol_philo->philo_id, "died\n");
-			break;
-		}
 		xcycle(singol_philo, "is eating\n", singol_philo->philo_info->t_t_eat);
-		if (singol_philo->philo_info->isdeat == 1)
-		{
-			if (singol_philo->is_death == 1)
-				ft_stamp(singol_philo, singol_philo->philo_id, "died\n");
-			break;
-		}
 		ck_eat(singol_philo);
 		if (singol_philo->philo_info->eat_cont_all_th == singol_philo->philo_info->n_philo)
-		{
-			if (singol_philo->is_death == 1)
-				ft_stamp(singol_philo, singol_philo->philo_id, "died\n");
 			break;
-		}
 		xcycle(singol_philo, "is sleeping\n", singol_philo->philo_info->t_t_sleep);
-		if (singol_philo->philo_info->isdeat == 1)
-		{
-			if (singol_philo->is_death == 1)
-				ft_stamp(singol_philo, singol_philo->philo_id, "died\n");
-			break;
-		}
 		ft_stamp(singol_philo, singol_philo->philo_id, "is thinking\n");
-		if (singol_philo->philo_info->isdeat == 1)
-		{
-			if (singol_philo->is_death == 1)
-				ft_stamp(singol_philo, singol_philo->philo_id, "died\n");
-			break;
-		}
 	}
+	pthread_mutex_lock(&singol_philo->philo_info->for_death);
+	singol_philo->philo_info->isdeat ++ ;
+	pthread_mutex_unlock(&singol_philo->philo_info->for_death);
 }
 
 void	ck_eat(struct s_singol_philo *singol_philo)
@@ -110,55 +66,37 @@ void	xcycle(struct s_singol_philo *ph, char *str, int conditions)
 {
 	ph->timevar = gettime();
 	ph->timevar2 = gettime();
+	ck_died(ph);
 	ft_stamp(ph, ph->philo_id, str);
 	while (ph->timevar2 - ph->timevar <= conditions)
 	{
-		if (ph->philo_info->isdeat == 1)
-			break;
 		ph->timevar2 = gettime();
+		ck_died(ph);
 	}
-	if (ph->philo_info->isdeat == 1)
-			return ;
-	printf("gg\n");
+	ph->last_eat = gettime();
 	if (str[3] != 'e')
 		return ;
-	ph->real_fork = 0;
-	ph->next->real_fork = 0;
 	pthread_mutex_unlock(&ph->singol_forks);
 	pthread_mutex_unlock(&ph->next->singol_forks);
-	ph->last_eat = ph->timevar2 - ph->timevar;
 }
 
 void	ft_stamp(struct s_singol_philo	*ph, int n, char *str)
 {
 	pthread_mutex_lock(&ph->philo_info->print);
 	ph->info_to_stamp = gettime() - ph->start_live;
-	printf("%llu %d %s", ph->info_to_stamp, n, str);
+	if (ph->philo_info->isdeat == 0 || str[0] == 'd')
+		printf("%llu %d %s", ph->info_to_stamp, n, str);
 	pthread_mutex_unlock(&ph->philo_info->print);
 }
 
 void	takeafork(struct s_singol_philo *singol_philo)
 {
-	while(singol_philo->real_fork == 1)
-	{
-		if (singol_philo->philo_info->isdeat == 1)
-			break;
-	}
-	if (singol_philo->philo_info->isdeat == 1)
-		return;
+	ck_died(singol_philo);
 	pthread_mutex_lock(&singol_philo->singol_forks);
-	singol_philo->real_fork = 1;
-	ft_stamp(singol_philo, singol_philo->philo_id, "has taken a fork 1\n");
-	while(singol_philo->next->real_fork == 1)
-	{
-		if (singol_philo->philo_info->isdeat == 1)
-			break;
-	}
-	if (singol_philo->philo_info->isdeat == 1)
-		return;
+	ft_stamp(singol_philo, singol_philo->philo_id, "has taken a fork\n");
+	ck_died(singol_philo);
 	pthread_mutex_lock(&singol_philo->next->singol_forks);
-	singol_philo->next->real_fork = 1;
-	ft_stamp(singol_philo, singol_philo->philo_id, "has taken a fork 2\n");
+	ft_stamp(singol_philo, singol_philo->philo_id, "has taken a fork\n");
 }
 
 long int	gettime(void)
@@ -167,7 +105,23 @@ long int	gettime(void)
 
 	if (gettimeofday(&tv, NULL))
 		return (-1);
-	// printf("TIME %ld\n", (tv.tv_usec / 1000) + (tv.tv_sec * 1000));
-	// pause();
 	return ((tv.tv_usec / 1000) + (tv.tv_sec * 1000));
+}
+
+void	ck_died(struct s_singol_philo *singol_philo)
+{
+	if (singol_philo->is_death == 1)
+		return ;
+	if (gettime() - singol_philo->last_eat >= singol_philo->philo_info->t_t_die)
+	{
+		pthread_mutex_lock(&singol_philo->philo_info->for_death);
+		singol_philo->philo_info->isdeat ++ ;
+		pthread_mutex_unlock(&singol_philo->philo_info->for_death);
+		singol_philo->is_death = 1;
+		pthread_mutex_lock(&singol_philo->philo_info->for_death);
+		if (singol_philo->philo_info->isdeat == 0)
+			return ;
+		pthread_mutex_unlock(&singol_philo->philo_info->for_death);
+		ft_stamp(singol_philo, singol_philo->philo_id, "died\n");
+	}
 }

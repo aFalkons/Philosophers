@@ -6,7 +6,7 @@
 /*   By: afalconi <afalconi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/24 02:51:16 by afalconi          #+#    #+#             */
-/*   Updated: 2023/06/26 03:45:23 by afalconi         ###   ########.fr       */
+/*   Updated: 2023/06/27 14:07:55 by afalconi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,13 +20,7 @@ int	main(int ac, char **av)
 	ph = ft_malloc(sizeof(t_singol_philo));
 	setup(ac - 1, &av[1], ph);
 	init_th_mutex(ph);
-	// while(1)
-	// {
-	// 	if (condiscion_for_end(info_philo) == 1)
-	// 		break;
-	// }
-	sleep(2);
-	// while (1);
+	while (ph->philo_info->isdeat != ph->philo_info->n_philo);
 }
 
 // int condiscion_for_end(struct s_philo *info_philo)

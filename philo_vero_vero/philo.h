@@ -6,7 +6,7 @@
 /*   By: afalconi <afalconi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/21 01:38:31 by afalconi          #+#    #+#             */
-/*   Updated: 2023/06/26 03:31:28 by afalconi         ###   ########.fr       */
+/*   Updated: 2023/06/27 13:52:06 by afalconi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,21 +53,22 @@ typedef struct s_singol_philo {
 	struct s_singol_philo	*next;
 }	t_singol_philo;
 
-void			setup(int ac, char **av, struct s_singol_philo *ph);
-void			ckchar(char	*av, int f);
-void			ft_exit(char *str, int f);
-int				ft_strlen(char	*str);
-int				ft_atoi(char *str);
-void			*ft_malloc(int bytes);
-void			init_th_mutex(struct s_singol_philo *ph);
-void			setup2(struct s_singol_philo *ph, int nuber_of_node, t_philo	*philo_info);
-long int		gettime(void);
-void			xcycle(struct s_singol_philo *ph, char *str, int conditions);
-void			ft_stamp(struct s_singol_philo	*ph, int n, char *str);
-void			takeafork(struct s_singol_philo *singol_philo);
-void			philo_routine(struct s_singol_philo *singol_philo);
-int				condiscion_for_end(struct s_philo *info_philo);
-void			ck_eat(struct s_singol_philo *singol_philo);
+void		setup(int ac, char **av, struct s_singol_philo *ph);
+void		ckchar(char	*av, int f);
+void		ft_exit(char *str, int f);
+int			ft_strlen(char	*str);
+int			ft_atoi(char *str);
+void		*ft_malloc(int bytes);
+void		init_th_mutex(struct s_singol_philo *ph);
+void		setup2(struct s_singol_philo *ph, int nuber_of_node, t_philo	*philo_info);
+long int	gettime(void);
+void		xcycle(struct s_singol_philo *ph, char *str, int conditions);
+void		ft_stamp(struct s_singol_philo	*ph, int n, char *str);
+void		takeafork(struct s_singol_philo *singol_philo);
+void		philo_routine(struct s_singol_philo *singol_philo);
+int			condiscion_for_end(struct s_philo *info_philo);
+void		ck_eat(struct s_singol_philo *singol_philo);
+void		ck_died(struct s_singol_philo *singol_philo);
 
 
 #endif
