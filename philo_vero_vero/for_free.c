@@ -1,26 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo.c                                            :+:      :+:    :+:   */
+/*   for_free.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: afalconi <afalconi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/24 02:51:16 by afalconi          #+#    #+#             */
-/*   Updated: 2023/07/04 02:03:08 by afalconi         ###   ########.fr       */
+/*   Created: 2023/07/03 22:00:59 by afalconi          #+#    #+#             */
+/*   Updated: 2023/07/03 23:40:13 by afalconi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	main(int ac, char **av)
+void	all_free(struct s_singol_philo *ph)
 {
-	struct s_singol_philo	*ph;
+	int						i;
+	int						n_philo;
+	struct s_singol_philo	*ph_tmp;
 
-	ph = ft_malloc(sizeof(t_singol_philo));
-	setup(ac - 1, &av[1], ph);
-	init_th_mutex(ph);
-	while (ph->philo_info->isdeat != ph->philo_info->n_philo)
-		;
-	all_free(ph);
-	return (0);
+	i = -1;
+	n_philo = ph->philo_info->n_philo;
+	free(ph->philo_info);
+	while (++i < n_philo)
+	{
+		ph_tmp = ph;
+		ph = ph->next;
+		free(ph_tmp);
+	}
 }

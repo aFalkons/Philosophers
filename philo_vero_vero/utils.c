@@ -6,18 +6,18 @@
 /*   By: afalconi <afalconi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/20 16:43:59 by afalconi          #+#    #+#             */
-/*   Updated: 2023/06/20 22:43:23 by afalconi         ###   ########.fr       */
+/*   Updated: 2023/07/04 00:49:17 by afalconi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	ft_exit(char *str, int f)
+void	ft_exit(char *str, int f, struct s_singol_philo *ph)
 {
 	if (str != NULL)
 		write(1, str, ft_strlen(str));
-	// if (ps != NULL)
-	// 	ft_free(ps);
+	if (ph != NULL)
+		free(ph);
 	exit(f);
 }
 
@@ -26,9 +26,9 @@ int	ft_strlen(char	*str)
 	int	i;
 
 	i = 0;
-	while(str[i])
+	while (str[i])
 		i ++;
-	return(0);
+	return (0);
 }
 
 int	ft_atoi(char *str)
