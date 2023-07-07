@@ -6,7 +6,7 @@
 /*   By: afalconi <afalconi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/24 03:13:43 by afalconi          #+#    #+#             */
-/*   Updated: 2023/07/04 03:52:36 by afalconi         ###   ########.fr       */
+/*   Updated: 2023/07/07 14:31:47 by afalconi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,17 +34,26 @@ void	philo_routine(struct s_singol_philo *ph)
 	ph->last_eat = ph->start_live;
 	while (ph->philo_info->isdeat == 0)
 	{
+		pthread_mutex_unlock(&ph->philo_info->for_death);
 		takeafork(ph);
+		ph->next->real_fork = 1;
+		if (if_is_death(ph))
+			return ;
 		xcycle(ph, "is eating\n", ph->philo_info->t_t_eat);
-		ck_eat(ph);
+		if (if_is_death(ph))
+			return ;
+		if (if_is_death(ph))
+			return ;
 		if (ph->philo_info->eat_cont_all_th == ph->philo_info->n_philo)
-			break ;
+			return ;
+		if (if_is_death(ph))
+			return ;
 		xcycle(ph, "is sleeping\n", ph->philo_info->t_t_sleep);
+		if (if_is_death(ph))
+			return ;
 		ft_stamp(ph, ph->philo_id, "is thinking\n");
+		pthread_mutex_lock(&ph->philo_info->for_death);
 	}
-	pthread_mutex_lock(&ph->philo_info->for_death);
-	ph->philo_info->isdeat ++ ;
-	pthread_mutex_unlock(&ph->philo_info->for_death);
 }
 
 void	ck_eat(struct s_singol_philo *ph)
@@ -65,13 +74,12 @@ void	ck_eat(struct s_singol_philo *ph)
 void	xcycle(struct s_singol_philo *ph, char *str, int conditions)
 {
 	ph->timevar = gettime();
-	ph->timevar2 = gettime();
 	ft_stamp(ph, ph->philo_id, str);
-	while (ph->timevar2 - ph->timevar <= conditions)
+	while (gettime() - ph->timevar <= conditions)
 	{
-		ph->timevar2 = gettime();
 		if (ck_died(ph) == 1)
 			break ;
+		usleep(100);
 	}
 	if (str[3] != 'e')
 		return ;
@@ -80,6 +88,9 @@ void	xcycle(struct s_singol_philo *ph, char *str, int conditions)
 	ph->real_fork = 0;
 	pthread_mutex_unlock(&ph->singol_forks);
 	pthread_mutex_unlock(&ph->next->singol_forks);
+	if (if_is_death(ph))
+		return ;
+	ck_eat(ph);
 }
 
 void	ft_stamp(struct s_singol_philo *ph, int n, char *str)

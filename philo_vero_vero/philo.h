@@ -6,7 +6,7 @@
 /*   By: afalconi <afalconi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/21 01:38:31 by afalconi          #+#    #+#             */
-/*   Updated: 2023/07/04 01:52:12 by afalconi         ###   ########.fr       */
+/*   Updated: 2023/07/07 14:40:35 by afalconi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ typedef struct s_singol_philo {
 	u_int64_t				eat_cont;
 	pthread_t				th_philo;
 	pthread_mutex_t			singol_forks;
+	pthread_mutex_t			for_death;
 	u_int64_t				real_fork;
 	t_philo					*philo_info;
 	u_int64_t				info_to_stamp;
@@ -53,7 +54,7 @@ typedef struct s_singol_philo {
 	struct s_singol_philo	*next;
 }	t_singol_philo;
 
-void		setup(int ac, char **av, struct s_singol_philo *ph);
+void		setup(int ac, char **av, struct s_singol_philo *ph, int i);
 void		ckchar(char	*av, int f, struct s_singol_philo *ph);
 void		ft_exit(char *str, int f, struct s_singol_philo *ph);
 int			ft_strlen(char	*str);
@@ -70,5 +71,7 @@ int			condiscion_for_end(struct s_philo *info_philo);
 void		ck_eat(struct s_singol_philo *singol_philo);
 int			ck_died(struct s_singol_philo *singol_philo);
 void		all_free(struct s_singol_philo *ph);
+void		killer(struct s_singol_philo *ph);
+int			if_is_death(struct s_singol_philo *ph);
 
 #endif
